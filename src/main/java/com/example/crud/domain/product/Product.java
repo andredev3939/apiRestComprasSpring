@@ -3,8 +3,6 @@ package com.example.crud.domain.product;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
-
 /* Representa a tabela no banco de dados*/
 @Table(name="product")
 @Entity(name="product")
