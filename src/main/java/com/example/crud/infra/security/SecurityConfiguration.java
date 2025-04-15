@@ -3,9 +3,13 @@ package com.example.crud.infra.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 /* Desabilitar configurações padrões (como aquela tela de login) e implementar as do sistema */
@@ -23,9 +27,19 @@ public class SecurityConfiguration {
                 /* Autorizar métodos HTTP e definir qual é a regra que cada um vai seguir */
                 .authorizeHttpRequests(authorize -> authorize
                     .requestMatchers(HttpMethod.POST, "/product").hasRole("ADMIN") // Somente admins podem adicionar produtos
-                    .anyRequest().authenticated() // Para todos os outros métodos, bastar estar autenticado (token)
+                    .anyRequest().authenticated() // Para todos os outros métodos, bastar estar autenticado (token) - valida no AuthenticationController
                 )
                 .build();
     }
+    /* Permite chamar o gerenciador da autenticação como um bean em todo o código */
+    @Bean
+    public AuthenticationManager authenticationManager (AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
+    /* Criptografa com Hash! */
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
+    }
 }
